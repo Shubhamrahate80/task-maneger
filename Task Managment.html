@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Task Lister</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li.completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        button.complete {
+            background-color: #28a745;
+        }
+
+        button.complete:hover {
+            background-color: #218838;
+        }
+
+        button.delete {
+            background-color: #dc3545;
+            margin-left: 10px;
+        }
+
+        button.delete:hover {
+            background-color: #c82333;
+        }
+
+        /* Styling for the analysis page link */
+        .analysis-link {
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .analysis-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Daily Task Lister</h1>
+
+        <form id="taskForm">
+            <input type="text" id="taskInput" placeholder="New task..." required />
+            <button type="submit">Add Task</button>
+        </form>
+
+        <h2>Not Completed Tasks</h2>
+        <ul id="notCompletedList"></ul>
+
+        <h2>Completed Tasks</h2>
+        <ul id="completedList"></ul>
+
+        <!-- Link to the analysis page -->
+        <a href="analysis.html" class="analysis-link">Analyze Data</a>
+    </div>
+
+    <script>
+        // JavaScript code
+        const taskForm = document.getElementById('taskForm');
+        const taskInput = document.getElementById('taskInput');
+        const notCompletedList = document.getElementById('notCompletedList');
+        const completedList = document.getElementById('completedList');
+
+        let tasks = [];
+
+        // Load tasks from local storage on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = storedTasks;
+            renderTasks();
+        });
+
+        // Function to render tasks in the lists
+        function renderTasks() {
+            // Clear the lists
+            notCompletedList.innerHTML = '';
+            completedList.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <span class="${task.isComplete ? 'completed' : ''}">${task.name}</span>
+                    <div>
+                        <button class="complete" onclick="toggleComplete(${index})">
+                            ${task.isComplete ? 'Undo' : 'Complete'}
+                        </button>
+                        <button class="delete" onclick="deleteTask(${index})">Delete</button>
+                    </div>
+                `;
+
+                // Add task to the correct list
+                if (task.isComplete) {
+                    completedList.appendChild(taskItem);
+                } else {
+                    notCompletedList.appendChild(taskItem);
+                }
+            });
+        }
+
+        // Function to handle form submission
+        taskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newTask = {
+                name: taskInput.value,
+                isComplete: false,
+            };
+            tasks.push(newTask);
+            taskInput.value = '';
+            saveTasks();
+            renderTasks();
+        });
+
+        // Function to toggle task completion
+        function toggleComplete(index) {
+            tasks[index].isComplete = !tasks[index].isComplete;
+            saveTasks();
+            renderTasks();
+        }
+
+        // Function to delete a task
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
+        }
+
+        // Function to save tasks to local storage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    </script>
+</body>
+
+</html>

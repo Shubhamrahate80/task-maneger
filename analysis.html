@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analysis</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            font-size: 18px;
+        }
+
+        .back-link {
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Data Analysis</h1>
+
+        <div class="summary">
+            <p id="completedTasks"></p>
+            <p id="pendingTasks"></p>
+        </div>
+
+        <a href="index.html" class="back-link">Back to Task Lister</a>
+    </div>
+
+    <script>
+        // JavaScript code
+        const completedTasksElement = document.getElementById('completedTasks');
+        const pendingTasksElement = document.getElementById('pendingTasks');
+
+        let tasks = [];
+
+        // Load tasks from local storage
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = storedTasks;
+            analyzeData();
+        });
+
+        // Function to analyze data and update the summary
+        function analyzeData() {
+            let completedCount = 0;
+            let pendingCount = 0;
+
+            tasks.forEach(task => {
+                if (task.isComplete) {
+                    completedCount++;
+                } else {
+                    pendingCount++;
+                }
+            });
+
+            completedTasksElement.innerHTML = `Completed Tasks: ${completedCount}`;
+            pendingTasksElement.innerHTML = `Pending Tasks: ${pendingCount}`;
+        }
+    </script>
+</body>
+
+</html>
